@@ -1,0 +1,19 @@
+# Data (never commit raw/processed data — large + license-restricted)
+data/
+*.parquet
+*.csv
+*.xlsx
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+*.egg-info/

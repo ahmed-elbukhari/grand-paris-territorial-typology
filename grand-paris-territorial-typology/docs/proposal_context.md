@@ -1,0 +1,13 @@
+# How this code maps onto the HARMONIC proposal
+
+This is a companion reference for readers of *Modelling Longitudinal Territorial Evolution and Lifestyle Changes: Can Big Data and AI Challenge Classical LUTI Approaches?* — the full proposal isn't reproduced here, but the table below lines up each section with the corresponding notebook.
+
+| Proposal section | What it argues | Where it's tested in code |
+|---|---|---|
+| §2, "A First Test: Proof-of-Concept on Greater Paris Data" | A commune-level panel combining SIRENE job-base growth with DVF housing-market growth/price can be clustered into a "longitudinal trajectory typology" — a small-scale prototype of the call's objective on territorial patterns and vulnerability. | [`notebooks/01_trajectory_typology_clustering.ipynb`](../notebooks/01_trajectory_typology_clustering.ipynb) |
+| §2, "Predictive test against a simple baseline" | A two-stage model (linear + gradient-boosted residual correction) forecasting business births should be benchmarked against naive persistence, not assumed to beat it. | [`notebooks/02_business_birth_forecast_xgboost.ipynb`](../notebooks/02_business_birth_forecast_xgboost.ipynb) |
+| §4, "Outlier- and small-sample-driven instability" | A few extreme communes can dominate distance-based clustering; this needs robust transformations and stability checks across specifications at HARMONIC scale. | Surfaced empirically in notebook 1's clustering diagnostics — motivates the winsorization/stability testing proposed for Phase 2 of the thesis. |
+| §4, "COVID-era structural break and limited temporal depth" | A short panel spanning 2020–2021 risks an ML model learning pandemic-specific deviations as persistent territorial dynamics. | The POC's limited usable training window (notebook 2) is the concrete instance of this risk; the proposal's Phase 3 plans to test models with and without the flagged period at HARMONIC's larger scale. |
+| §4, "Interpretability versus predictive flexibility" | A structural component plus an explicitly labelled ML correction lets you separate what predictive power comes from established relationships vs. flexible pattern fitting. | The linear-plus-residual-correction architecture in notebook 2 is the POC-scale version of this design. |
+
+**Scope note:** both notebooks use only open data (SIRENE, DVF) at commune level across Paris + Hauts-de-Seine (92) + Seine-Saint-Denis (93) + Val-de-Marne (94). The proposal's full-scale plan extends this to BPE-type amenity inventories, HARMONIC's proprietary datasets, and a longer, IRIS-level panel — this repo is deliberately the small, honest version built to find problems early.
