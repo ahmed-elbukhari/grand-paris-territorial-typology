@@ -88,7 +88,7 @@ Then update the `BASE`/`PATH` constants near the top of each notebook to point a
 
 **Ahmed Elbukhari** — Research Assistant, Transport and Traffic Modelling, Linköping University (CODE FLOW project). MSc Intelligent Transportation Systems & Logistics (Linköping); BSc Civil Engineering–Transportation (University of Khartoum). Co-lead, KhartouMap (MIT Open Data Prize, 2024).
 
-<!-- Add your LinkedIn / Scholar / contact links here -->
+https://www.linkedin.com/in/ahmed-elbukhari/
 
 ## License
 
