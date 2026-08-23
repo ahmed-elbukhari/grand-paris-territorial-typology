@@ -22,7 +22,24 @@ This repo is that pipeline. It has two independent but complementary parts:
 - **Typology (notebook 1):** clustering a 4-feature commune panel (job-base growth, price growth, transaction-volume change, price level) with k-means recovers a four-way typology that maps cleanly onto known geography — central Paris (low job growth, high price/activity), affluent inner-west suburbs (stable, low growth), most of Seine-Saint-Denis (high job growth, still affordable), and a smaller "gentrifying" pocket on the northeastern edge combining job growth, price growth *and* activity from a low starting price level. It also surfaced a real weakness first: one or two extreme communes visibly dominate the price-growth-rate feature, which is exactly the outlier risk flagged in §4 of the proposal and motivates the winsorization/stability checks planned for the full thesis.
 - **Forecasting (notebook 2):** benchmarked against a naive persistence baseline on held-out 2025 business-birth data. The result is a genuine trade-off, not a clean win either way — **persistence has the lowest typical-case error (MAE) but by far the worst error on extreme communes (RMSE/R²)**, while the ML models invert that pattern. Adding more training history (2016–2021 vs. 2016-only) improved MAE but made RMSE/R² worse, and the gradient-boosted residual correction added almost nothing over the linear component alone. BPE amenity features were tested and dropped — near-zero standalone predictive power once business history is already in the model.
 
-Full diagnostics, tables, and the feature-level choropleths behind the typology are in [`docs/results.md`](docs/results.md). Both notebooks were run locally against processed parquet panels; see [Data](#data--reproducing) below for what's needed to rerun them.
+Full diagnostics and the XGBoost tables are in [`docs/results.md`](docs/results.md).
+
+### What the four clustering features actually measure
+
+![The four underlying features as choropleths](figures/map_typology_features.png)
+
+The typology above isn't a simple two-year before/after comparison — it clusters communes on four features, each capturing a different aspect of change (or non-change):
+
+| Feature | What it measures | Time window | Source |
+|---|---|---|---|
+| `establishment_growth_rate` | % change in the number of *active* businesses in a commune — computed by snapshotting who's active (created and not yet closed) at five points in time and comparing the first and last snapshot. This is the **job-base trajectory**. | 2013 → 2024 | SIRENE |
+| `price_growth_rate` | % change in the median residential price per m², after restricting to genuine single-unit home sales (no bundled/multi-lot transactions) and deduplicating repeat rows from the same sale. This is the **housing-cost trajectory**. | 2021 → 2025 | DVF |
+| `transaction_volume_change` | % change in the *number* of home sales — a proxy for how liquid/active the local market is, independent of price. A commune can have flat prices but a market that's gone quiet, or vice versa. | 2021 → 2025 | DVF |
+| `median_price_per_sqm_2025` | The *current* price level itself (not a rate of change) — needed so the clustering can tell apart "cheap and rising" from "already expensive and rising further," which two identical growth rates alone can't distinguish. | 2025 snapshot | DVF |
+
+In other words: two of the four features are longer-run growth rates (11 years for jobs, 4 years for prices), one is a change in market activity rather than price, and one is a plain price level with no time dimension at all. All four are winsorized (capped at the 5th/95th percentile) before clustering so that one or two extreme communes can't single-handedly dominate the result — see the note on the price-growth-rate outlier below.
+
+**Reading the four panels above:** `establishment_growth_rate` shows the clearest spatial pattern — growth concentrated on the outer ring, with pockets of decline scattered through the inner suburbs. `price_growth_rate` is nearly flat everywhere *except* one commune near Argenteuil saturating each end of the color scale — a visible instance of the exact outlier risk the winsorizing step exists to control. `transaction_volume_change` shows a broad slowdown in the outer departments versus more stable activity in the core. `median_price_per_sqm_2025` reproduces the well-known Paris price gradient: expensive center and west, cheaper northeast/southeast periphery.
 
 ## Repo structure
 
